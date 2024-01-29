@@ -2,7 +2,9 @@ package com.Restaurant.Management.System.RestaurantManagementSystem.services;
 
 import com.Restaurant.Management.System.RestaurantManagementSystem.exceptions.UnauthorizedAccessException;
 import com.Restaurant.Management.System.RestaurantManagementSystem.exceptions.UserNotFoundException;
+import org.springframework.stereotype.Component;
 
+@Component
 public interface WaitListService {
     int addUserToWaitList(long userId) throws UserNotFoundException;
 

@@ -3,8 +3,10 @@ package com.Restaurant.Management.System.RestaurantManagementSystem.services;
 import com.Restaurant.Management.System.RestaurantManagementSystem.exceptions.UnAuthorizedAccess;
 import com.Restaurant.Management.System.RestaurantManagementSystem.exceptions.UserNotFoundException;
 import com.Restaurant.Management.System.RestaurantManagementSystem.models.*;
+import com.Restaurant.Management.System.RestaurantManagementSystem.repositories.DailyRevenueRepository;
 import com.Restaurant.Management.System.RestaurantManagementSystem.repositories.DailyRevenueRepositoryImpl;
 import com.Restaurant.Management.System.RestaurantManagementSystem.repositories.UserRepoImplementation;
+import com.Restaurant.Management.System.RestaurantManagementSystem.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -18,13 +20,13 @@ import java.util.Optional;
 @Component
 public class RevenueServiceImplementation implements RevenueService{
     @Autowired
-    private UserRepoImplementation userRepoImplementation;
+    private UserRepository userRepository;
     @Autowired
-    private DailyRevenueRepositoryImpl dailyRevenueRepo;
+    private DailyRevenueRepository dailyRevenueRepository;
 
     @Override
     public AggregatedRevenue calculateRevenue(long userId, String queryType) throws UnAuthorizedAccess, UserNotFoundException {
-       Optional<User> userOptional = userRepoImplementation.findById(userId);
+       Optional<User> userOptional = userRepository.findById(userId);
        if(userOptional.isEmpty()){
            throw new UserNotFoundException("User not found");
        }
@@ -33,7 +35,7 @@ public class RevenueServiceImplementation implements RevenueService{
            if (queryType.equals(RevenueQueryType.CURRENT_MONTH)) {
                LocalDate startdate = LocalDate.now().withDayOfMonth(1);
                LocalDate enddate = LocalDate.now().plusMonths(1).withDayOfMonth(1).minusDays(1);
-               List<DailyRevenue> dailyRevenueList = dailyRevenueRepo.getDailyRevenueBetweenDates(Date.from(startdate.atStartOfDay(ZoneId.systemDefault()).toInstant())
+               List<DailyRevenue> dailyRevenueList = dailyRevenueRepository.getDailyRevenueBetweenDates(Date.from(startdate.atStartOfDay(ZoneId.systemDefault()).toInstant())
                        , Date.from(enddate.atStartOfDay(ZoneId.systemDefault()).toInstant()));
                double totalRevenue = 0.0;
                double totalgst = 0.0;
@@ -56,7 +58,7 @@ public class RevenueServiceImplementation implements RevenueService{
            } else if (queryType.equals(RevenueQueryType.CURRENT_FY)) {
                LocalDate startdate = LocalDate.now().withMonth(4).withDayOfMonth(1);
                LocalDate enddate = LocalDate.now().plusYears(1).withMonth(3).withDayOfMonth(31);
-               List<DailyRevenue> dailyRevenueList = dailyRevenueRepo.getDailyRevenueBetweenDates(Date.from(startdate.atStartOfDay(ZoneId.systemDefault()).toInstant())
+               List<DailyRevenue> dailyRevenueList =dailyRevenueRepository.getDailyRevenueBetweenDates(Date.from(startdate.atStartOfDay(ZoneId.systemDefault()).toInstant())
                        , Date.from(enddate.atStartOfDay(ZoneId.systemDefault()).toInstant()));
 
                AggregatedRevenue aggregatedRevenue = new AggregatedRevenue();
@@ -84,7 +86,7 @@ public class RevenueServiceImplementation implements RevenueService{
                LocalDate startdate = currentdate.minusMonths(1).withDayOfMonth(1);
                LocalDate enddate = currentdate.withDayOfMonth(1).minusDays(1);
 
-               List<DailyRevenue> dailyRevenueList = dailyRevenueRepo.getDailyRevenueBetweenDates(Date.from(startdate.atStartOfDay(ZoneId.systemDefault()).toInstant())
+               List<DailyRevenue> dailyRevenueList = dailyRevenueRepository.getDailyRevenueBetweenDates(Date.from(startdate.atStartOfDay(ZoneId.systemDefault()).toInstant())
                        , Date.from(enddate.atStartOfDay(ZoneId.systemDefault()).toInstant()));
 
                AggregatedRevenue aggregatedRevenue = new AggregatedRevenue();
@@ -110,7 +112,7 @@ public class RevenueServiceImplementation implements RevenueService{
                int currentYear = currentDate.getYear();
                LocalDate startdate = LocalDate.of(currentYear - 1, 4, 1); // Assuming the financial year starts on April 1st
                LocalDate enddate = LocalDate.of(currentYear, 3, 31); // Assuming the financial year ends on March 31st
-               List<DailyRevenue> dailyRevenueList = dailyRevenueRepo.getDailyRevenueBetweenDates(Date.from(startdate.atStartOfDay(ZoneId.systemDefault()).toInstant())
+               List<DailyRevenue> dailyRevenueList = dailyRevenueRepository.getDailyRevenueBetweenDates(Date.from(startdate.atStartOfDay(ZoneId.systemDefault()).toInstant())
                        , Date.from(enddate.atStartOfDay(ZoneId.systemDefault()).toInstant()));
 
                AggregatedRevenue aggregatedRevenue = new AggregatedRevenue();
