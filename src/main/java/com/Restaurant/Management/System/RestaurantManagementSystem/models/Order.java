@@ -8,6 +8,6 @@ import java.util.Map;
 @Getter
 @Setter
 public class Order extends BaseModel{
-    private CustomerSession customerSession;
+    private Customer customer;
     private Map<MenuItem, Integer> orderedItems;
 }
