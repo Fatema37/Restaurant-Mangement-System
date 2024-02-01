@@ -24,18 +24,15 @@ public class OrderServiceImpl implements OrderService{
     private CustomerSessionRepository customerSessionRepository;
     @Override
     public Order placeOrder(long userId, Map<Long, Integer> orderedItems) throws UserNotFoundException, InvalidMenuItem {
-
         Optional<User> userOptional = userRepository.findById(userId);
         if(userOptional.isEmpty()){
             throw new UserNotFoundException("User not found");
-
         }
         User user = userOptional.get();
         Map<MenuItem, Integer> orderDetail = new HashMap<>();
         for(Map.Entry<Long,Integer> entry : orderedItems.entrySet()){
             Long menuItemId = entry.getKey();
             Integer quantity = entry.getValue();
-
             Optional<MenuItem> optionalMenuItem = menuItemRepository.findById(menuItemId);
             if(optionalMenuItem.isEmpty()){
                 throw new InvalidMenuItem("Menu Item is invalid" +menuItemId);
